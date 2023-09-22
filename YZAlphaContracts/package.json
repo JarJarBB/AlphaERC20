@@ -1,0 +1,14 @@
+{
+  "name": "yzcontracts",
+  "version": "1.0.0",
+  "description": "Used for creating a smart-contract that manages ERC-20 tokens, where one token is received and used to mint and distribute another token based on proportional contributions.",
+  "license": "MIT",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-ethers": "^3.0.4",
+    "@nomicfoundation/hardhat-toolbox": "^3.0.0",
+    "@openzeppelin/contracts-upgradeable": "^4.9.3",
+    "@openzeppelin/hardhat-upgrades": "^2.2.1",
+    "ethers": "^6.7.1",
+    "hardhat": "^2.17.3"
+  }
+}
