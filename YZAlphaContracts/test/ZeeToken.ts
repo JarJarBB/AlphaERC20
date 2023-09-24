@@ -1,7 +1,7 @@
-const {
-  loadFixture,
-} = require("@nomicfoundation/hardhat-toolbox/network-helpers");
-const { expect } = require("chai");
+import { loadFixture } from "@nomicfoundation/hardhat-toolbox/network-helpers";
+import { expect } from "chai";
+import { ethers, upgrades } from "hardhat";
+import { ZeeToken } from "../typechain-types";
 
 describe("ZeeToken", function () {
   // We define a fixture to reuse the same setup in every test.
@@ -10,7 +10,7 @@ describe("ZeeToken", function () {
     const [defaultAdmin, minter, otherAccount] = await ethers.getSigners();
 
     const ZeeToken = await ethers.getContractFactory("ZeeToken");
-    const zeeToken = await upgrades.deployProxy(ZeeToken);
+    const zeeToken = (await upgrades.deployProxy(ZeeToken)) as any as ZeeToken;
 
     // Grant another account minter role
     const minterRole = await zeeToken.MINTER_ROLE();

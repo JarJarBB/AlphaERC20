@@ -1,7 +1,7 @@
-const {
-  loadFixture,
-} = require("@nomicfoundation/hardhat-toolbox/network-helpers");
-const { expect } = require("chai");
+import { loadFixture } from "@nomicfoundation/hardhat-toolbox/network-helpers";
+import { expect } from "chai";
+import { ethers, upgrades } from "hardhat";
+import { WhyToken } from "../typechain-types";
 
 describe("WhyToken", function () {
   // We define a fixture to reuse the same setup in every test.
@@ -10,7 +10,7 @@ describe("WhyToken", function () {
     const [owner, otherAccount] = await ethers.getSigners();
 
     const WhyToken = await ethers.getContractFactory("WhyToken");
-    const whyToken = await upgrades.deployProxy(WhyToken);
+    const whyToken = (await upgrades.deployProxy(WhyToken)) as any as WhyToken;
 
     return { whyToken, owner, otherAccount };
   }

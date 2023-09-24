@@ -1,7 +1,7 @@
-const {
-  loadFixture,
-} = require("@nomicfoundation/hardhat-toolbox/network-helpers");
-const { expect } = require("chai");
+import { loadFixture } from "@nomicfoundation/hardhat-toolbox/network-helpers";
+import { expect } from "chai";
+import { ethers, upgrades } from "hardhat";
+import { Alpha, WhyToken, ZeeToken } from "../typechain-types";
 
 describe("Alpha", function () {
   const Z_AMOUNT = ethers.parseEther("100"); // we need a Z amount of 100 * 10 ** 18
@@ -13,17 +13,20 @@ describe("Alpha", function () {
 
     // Deploy WhyToken
     const WhyToken = await ethers.getContractFactory("WhyToken");
-    const whyToken = await upgrades.deployProxy(WhyToken);
+    const whyToken = (await upgrades.deployProxy(WhyToken)) as any as WhyToken;
     const whyAddress = await whyToken.getAddress();
 
     // Deploy ZeeToken
     const ZeeToken = await ethers.getContractFactory("ZeeToken");
-    const zeeToken = await upgrades.deployProxy(ZeeToken);
+    const zeeToken = (await upgrades.deployProxy(ZeeToken)) as any as ZeeToken;
     const zeeAddress = await zeeToken.getAddress();
 
     // Deploy the Alpha contract
     const Alpha = await ethers.getContractFactory("Alpha");
-    const alpha = await upgrades.deployProxy(Alpha, [whyAddress, zeeAddress]);
+    const alpha = (await upgrades.deployProxy(Alpha, [
+      whyAddress,
+      zeeAddress,
+    ])) as any as Alpha;
     const alphaAddress = await alpha.getAddress();
 
     // Move the minting role to the Alpha contract
