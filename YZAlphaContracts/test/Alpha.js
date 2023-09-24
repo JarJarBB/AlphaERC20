@@ -4,7 +4,7 @@ const {
 const { expect } = require("chai");
 
 describe("Alpha", function () {
-  const Y_TO_Z = 100; // "exchange rate" between tokens Y and Z
+  const Z_AMOUNT = ethers.parseEther("100"); // we need a Z amount of 100 * 10 ** 18
 
   // We define a fixture to reuse the same setup in every test.
   async function deployContractFixture() {
@@ -42,7 +42,7 @@ describe("Alpha", function () {
     expect(await alpha.tokenZ()).to.equal(await zeeToken.getAddress());
   });
 
-  it("Should deposit Y tokens and increase redeemableZ", async function () {
+  it("Should deposit Y tokens and increase contributions", async function () {
     const { whyToken, otherAccount, alpha } = await loadFixture(
       deployContractFixture
     );
@@ -58,9 +58,7 @@ describe("Alpha", function () {
     // Deposit Y tokens
     await alpha.connect(otherAccount).depositY(yAmount);
     expect(await whyToken.balanceOf(otherAccount.address)).to.equal(0);
-    expect(await alpha.redeemableZ(otherAccount.address)).to.equal(
-      yAmount * Y_TO_Z
-    );
+    expect(await alpha.contributions(otherAccount.address)).to.equal(yAmount);
   });
 
   it("Should not be able to deposit zero Y tokens", async function () {
@@ -70,38 +68,50 @@ describe("Alpha", function () {
     );
   });
 
-  it("Should redeem Z tokens and reset redeemableZ", async function () {
-    const { whyToken, zeeToken, otherAccount, alpha } = await loadFixture(
-      deployContractFixture
-    );
+  it("Should redeem Z tokens and reset contributions", async function () {
+    const { whyToken, zeeToken, admin, otherAccount, alpha } =
+      await loadFixture(deployContractFixture);
 
-    // Deposit Y tokens
-    const yAmount = 40;
-    await whyToken.connect(otherAccount).airdrop(otherAccount.address, yAmount);
+    // Deposit Y tokens for User 1
+    const yAmount1 = 300;
+    await whyToken
+      .connect(otherAccount)
+      .airdrop(otherAccount.address, yAmount1);
     const alphaAddress = await alpha.getAddress();
-    await whyToken.connect(otherAccount).approve(alphaAddress, yAmount);
-    await alpha.connect(otherAccount).depositY(yAmount);
+    await whyToken.connect(otherAccount).approve(alphaAddress, yAmount1);
+    await alpha.connect(otherAccount).depositY(yAmount1);
 
-    // Redeem Z tokens
-    await alpha.connect(otherAccount).redeemZ();
+    // Deposit Y tokens for User 2
+    const yAmount2 = 100;
+    await whyToken.airdrop(admin.address, yAmount2);
+    await whyToken.approve(alphaAddress, yAmount2);
+    await alpha.depositY(yAmount2);
+
+    expect(await alpha.totalContribution()).to.equal(yAmount1 + yAmount2);
+
+    // Distribute Z tokens
+    await alpha.distributeAllZ();
     expect(await zeeToken.balanceOf(otherAccount.address)).to.equal(
-      yAmount * Y_TO_Z
+      (Z_AMOUNT * BigInt(yAmount1)) / BigInt(yAmount1 + yAmount2)
     );
-    expect(await alpha.redeemableZ(otherAccount.address)).to.equal(0);
+    expect(await zeeToken.balanceOf(admin.address)).to.equal(
+      (Z_AMOUNT * BigInt(yAmount2)) / BigInt(yAmount1 + yAmount2)
+    );
+    expect(await alpha.totalContribution()).to.equal(0);
   });
 
-  it("Should not redeem Z tokens without first depositing Y tokens", async function () {
+  it("Should not allow non-admin to distribute Z tokens", async function () {
     const { otherAccount, alpha } = await loadFixture(deployContractFixture);
-    await expect(alpha.connect(otherAccount).redeemZ()).to.be.revertedWith(
-      "Amount must be greater than 0"
-    );
+    await expect(
+      alpha.connect(otherAccount).distributeAllZ()
+    ).to.be.revertedWith("Ownable: caller is not the owner");
   });
 
   it("Should emit correct events", async function () {
     const { whyToken, admin, alpha } = await loadFixture(deployContractFixture);
 
     // Check for deposit event
-    const yAmount = 40;
+    const yAmount = 200;
     await whyToken.airdrop(admin.address, yAmount);
     const alphaAddress = await alpha.getAddress();
     await whyToken.approve(alphaAddress, yAmount);
@@ -110,8 +120,8 @@ describe("Alpha", function () {
       .withArgs(yAmount, admin.address);
 
     // Check for redeem event
-    await expect(alpha.redeemZ())
+    await expect(alpha.distributeAllZ())
       .to.emit(alpha, "ZRedeem")
-      .withArgs(yAmount * Y_TO_Z, admin.address);
+      .withArgs(Z_AMOUNT, admin.address);
   });
 });
