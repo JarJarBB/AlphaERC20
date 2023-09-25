@@ -5,6 +5,7 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
+import "./IERC20Alpha.sol";
 
 /**
  * @title Alpha
@@ -19,8 +20,8 @@ contract Alpha is
 {
     uint256 public constant Z_AMOUNT = 100 * (10 ** 18);
 
-    IERC20Airdrop public tokenY;
-    IERC20Airdrop public tokenZ;
+    IERC20Alpha public tokenY;
+    IERC20Alpha public tokenZ;
 
     mapping(address => uint256) public contributions;
     address[] public contributionKeys;
@@ -42,8 +43,8 @@ contract Alpha is
     function initialize(address _tokenY, address _tokenZ) public initializer {
         __Ownable_init();
         __ReentrancyGuard_init();
-        tokenY = IERC20Airdrop(_tokenY);
-        tokenZ = IERC20Airdrop(_tokenZ);
+        tokenY = IERC20Alpha(_tokenY);
+        tokenZ = IERC20Alpha(_tokenZ);
     }
 
     /**
@@ -106,8 +107,4 @@ contract Alpha is
         }
         totalContribution = 0;
     }
-}
-
-interface IERC20Airdrop is IERC20Upgradeable {
-    function airdrop(address account, uint256 amount) external;
 }

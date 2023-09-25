@@ -10,7 +10,7 @@ const user2account = async (
   hre: HardhatRuntimeEnvironment
 ): Promise<HardhatEthersSigner> => {
   let userNum: number;
-  switch (user) {
+  switch (user.toLowerCase()) {
     case "owner":
       userNum = 0;
       break;
