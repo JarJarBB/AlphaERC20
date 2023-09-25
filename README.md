@@ -10,14 +10,42 @@ npm install
 npx hardhat test
 ```
 
-## Environment Setup
+## Run Local Node
 
-TODO
+```shell
+npx hardhat node
+```
 
 ## Deployment
 
-TODO
+```shell
+npx hardhat run scripts/deploy.ts --network localhost
+```
 
-## Publish Contract Source
+## Users
 
-TODO
+This project includes named users. In the following CLI commands, replace `<user>` with `alice`, `bob`, or `owner`.
+
+## Airdrop Y Tokens
+
+```shell
+npx hardhat airdrop-y --user <user> --amount <amount> --network localhost
+
+npx hardhat y-balance --user <user> --network localhost
+```
+
+## Contribute Y Tokens
+
+```shell
+npx hardhat deposit-y --user <user> --amount <amount> --network localhost
+
+npx hardhat alpha-contributions --network localhost
+```
+
+## Mint and Distribute Z Tokens
+
+```shell
+npx hardhat distribute-z --user owner --network localhost
+
+npx hardhat z-balance --user <user> --network localhost
+```

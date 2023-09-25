@@ -47,6 +47,14 @@ contract Alpha is
     }
 
     /**
+     * @dev Get the entire contributionKeys array.
+     * @return An array of addresses.
+     */
+    function getContributionKeys() external view returns (address[] memory) {
+        return contributionKeys;
+    }
+
+    /**
      * @dev Allows users to deposit tokenY to receive future tokenZ.
      * Emits a `YDeposit` event with the amount of Y tokens contributed.
      * @param amount The amount of tokenY to deposit.
