@@ -69,7 +69,7 @@ task(
 
   // Get a list of contributors and remove duplicates
   const keys = await alpha.getContributionKeys();
-  const cleanKeys = [...new Set<string>(keys)];
+  const cleanKeys = Array.from(new Set<string>(keys));
   const totalContribution = await alpha.totalContribution();
 
   // Print each contribution as a percentage of the total

@@ -1,0 +1,27 @@
+{
+  "name": "dashboard-next",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "chart.js": "^4.4.0",
+    "ethers": "^6.7.1",
+    "next": "latest",
+    "react": "latest",
+    "react-chartjs-2": "^5.2.0",
+    "react-dom": "latest"
+  },
+  "devDependencies": {
+    "@types/node": "latest",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "eslint": "latest",
+    "eslint-config-next": "latest",
+    "typescript": "latest"
+  }
+}

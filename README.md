@@ -22,6 +22,16 @@ npx hardhat node
 npx hardhat run scripts/deploy.ts --network localhost
 ```
 
+## (Optional) Start UI Dashboard
+
+```shell
+cd dashboard-next
+npm install
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the Y token contribution proportions.
+
 ## Users
 
 This project includes named users. In the following CLI commands, replace `<user>` with `alice`, `bob`, or `owner`.
